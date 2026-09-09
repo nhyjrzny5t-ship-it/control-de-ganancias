@@ -54,7 +54,21 @@ label{display:block;font-weight:700;font-size:14px;margin:10px 0 6px}input,selec
 
 <script>
 const OLD_KEY="cg_products_v1",DATA_KEY="cg_data_v2";let data=loadData(),editing=null,saleLines=[];
-function loadData(){const s=JSON.parse(localStorage.getItem(DATA_KEY)||"null");if(s&&Array.isArray(s.products)&&Array.isArray(s.sales))return s;const old=JSON.parse(localStorage.getItem(OLD_KEY)||"[]");return{products:old.map(p=>({...p,sold:Number(p.sold||0)})),sales:[]}}
+function safeJSON(key,fallback){try{return JSON.parse(localStorage.getItem(key)||"null") ?? fallback}catch(e){return fallback}}
+function loadData(){
+  const s=safeJSON(DATA_KEY,null);
+  const old=safeJSON(OLD_KEY,[]);
+  // If the current key exists but is empty, recover the older saved data.
+  if(s&&Array.isArray(s.products)&&Array.isArray(s.sales)&&
+     (s.products.length>0||s.sales.length>0)) return s;
+  if(Array.isArray(old)&&old.length>0){
+    const recovered={products:old.map(p=>({...p,sold:Number(p.sold||0)})),sales:[]};
+    localStorage.setItem(DATA_KEY,JSON.stringify(recovered));
+    return recovered;
+  }
+  if(s&&Array.isArray(s.products)&&Array.isArray(s.sales)) return s;
+  return {products:[],sales:[]};
+}
 function persist(){localStorage.setItem(DATA_KEY,JSON.stringify(data))}
 const $=id=>document.getElementById(id),money=n=>"₡"+Number(n||0).toLocaleString("es-CR",{minimumFractionDigits:0,maximumFractionDigits:2});
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
