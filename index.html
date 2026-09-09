@@ -9,137 +9,234 @@
 <style>
 :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:#111827;background:#f3f4f6}
 *{box-sizing:border-box}body{margin:0;background:#f3f4f6}
-header{background:#111827;color:#fff;padding:20px 18px 18px;position:sticky;top:0;z-index:2}
+header{background:#111827;color:#fff;padding:20px 18px 18px;position:sticky;top:0;z-index:3}
 header h1{margin:0;font-size:25px}header p{margin:5px 0 0;color:#d1d5db}
-main{max-width:760px;margin:auto;padding:14px}
+main{max-width:800px;margin:auto;padding:14px}
 .card{background:#fff;border-radius:16px;padding:17px;margin-bottom:14px;box-shadow:0 2px 10px #0001}
 h2{font-size:19px;margin:0 0 14px}
 label{display:block;font-weight:700;font-size:14px;margin:10px 0 6px}
 input,select{width:100%;padding:13px;border:1px solid #d1d5db;border-radius:10px;font-size:16px;background:#fff}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}
-.full{grid-column:1/-1}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px}.full{grid-column:1/-1}
 button{border:0;border-radius:10px;padding:13px 15px;font-size:15px;font-weight:700;cursor:pointer}
-.primary{width:100%;background:#111827;color:white;margin-top:15px}
-.secondary{background:#e5e7eb;color:#111827}
-.danger{background:#fee2e2;color:#991b1b}
-.hidden{display:none!important}
-.preview{margin-top:12px;background:#f9fafb;padding:12px;border-radius:10px}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.stat{background:#f9fafb;padding:13px;border-radius:11px}.stat small{color:#6b7280}.stat b{display:block;font-size:19px;margin-top:3px}
+.primary{width:100%;background:#111827;color:white;margin-top:15px}.secondary{background:#e5e7eb;color:#111827}
+.danger{background:#fee2e2;color:#991b1b}.success{background:#dcfce7;color:#166534}
+.hidden{display:none!important}.preview{margin-top:12px;background:#f9fafb;padding:12px;border-radius:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{background:#f9fafb;padding:13px;border-radius:11px}
+.stat small{color:#6b7280}.stat b{display:block;font-size:19px;margin-top:3px}
 .item{border-top:1px solid #e5e7eb;padding:15px 0}.item:first-child{border-top:0}
-.item h3{margin:0 0 7px}.item p{margin:5px 0;font-size:14px}
-.profit{font-weight:800}.actions{margin-top:10px;display:flex;gap:7px}
-.notice{font-size:13px;color:#6b7280;margin-top:8px}
+.item h3{margin:0 0 7px}.item p{margin:5px 0;font-size:14px}.profit{font-weight:800}
+.actions{margin-top:10px;display:flex;gap:7px;flex-wrap:wrap}.notice{font-size:13px;color:#6b7280;margin-top:8px}
+.sale-line{background:#f9fafb;border-radius:11px;padding:11px;margin:8px 0}
+.sale-line-top{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.sale-total{font-size:20px;font-weight:800}.empty{padding:10px 0;color:#6b7280}
+.tabs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:14px}
+.tab{background:#e5e7eb}.tab.active{background:#111827;color:#fff}
+.section{display:none}.section.active{display:block}
+hr{border:0;border-top:1px solid #e5e7eb;margin:15px 0}
 @media(max-width:520px){.grid{grid-template-columns:1fr}.full{grid-column:auto}}
 </style>
 </head>
 <body>
-<header><h1>💰 Control de Ganancias</h1><p>Compra, venta e inventario</p></header>
+<header><h1>💰 Control de Ganancias</h1><p>Inventario, ventas y ganancias</p></header>
 <main>
+<div class="tabs">
+<button class="tab active" data-tab="productos">📦 Productos</button>
+<button class="tab" data-tab="venta">🛒 Nueva venta</button>
+<button class="tab" data-tab="historial">📋 Historial</button>
+</div>
+
+<section id="productos" class="section active">
 <section class="card">
 <h2 id="formTitle">Agregar producto</h2>
 <label>Producto</label><input id="name" placeholder="Ej. Camisa">
 <div class="grid">
 <div><label>Tipo de compra</label>
 <select id="currency"><option value="CRC">Compra en colones (₡)</option><option value="USD">Compra en dólares ($)</option></select></div>
-<div><label>Cantidad</label><input id="qty" type="number" min="1" step="1" value="1"></div>
-<div><label id="buyLabel">Precio de compra (₡)</label><input id="buy" type="number" min="0" step="0.01" placeholder="0"></div>
+<div><label>Cantidad comprada</label><input id="qty" type="number" min="1" step="1" value="1"></div>
+<div><label id="buyLabel">Precio de compra por unidad (₡)</label><input id="buy" type="number" min="0" step="0.01" placeholder="0"></div>
 <div id="rateBox" class="hidden"><label>Tipo de cambio que pagaste</label><input id="rate" type="number" min="0" step="0.01" placeholder="Ej. 505"></div>
-<div class="full"><label>Precio de venta (₡)</label><input id="sell" type="number" min="0" step="0.01" placeholder="0"></div>
+<div class="full"><label>Precio de venta por unidad (₡)</label><input id="sell" type="number" min="0" step="0.01" placeholder="0"></div>
 </div>
 <div id="preview" class="preview hidden"></div>
 <button id="save" class="primary">Agregar producto</button>
 <button id="cancel" class="secondary hidden" style="width:100%;margin-top:8px">Cancelar edición</button>
-<div class="notice">En productos comprados en USD, el tipo de cambio es el que realmente pagaste por esos dólares.</div>
+<div class="notice">Los productos comprados en USD conservan el tipo de cambio que realmente pagaste por esos dólares.</div>
 </section>
 
 <section class="card">
 <h2>Resumen</h2>
 <div class="stats">
 <div class="stat"><small>Productos</small><b id="count">0</b></div>
-<div class="stat"><small>Inversión</small><b id="invested">₡0</b></div>
+<div class="stat"><small>Unidades en inventario</small><b id="units">0</b></div>
+<div class="stat"><small>Valor del inventario</small><b id="inventoryValue">₡0</b></div>
 <div class="stat"><small>Ventas</small><b id="sales">₡0</b></div>
+<div class="stat"><small>Costo vendido</small><b id="soldCost">₡0</b></div>
 <div class="stat"><small>Ganancia</small><b id="profit">₡0</b></div>
 </div>
 </section>
 
+<section class="card"><h2>Inventario</h2><div id="list"></div></section>
+</section>
+
+<section id="venta" class="section">
 <section class="card">
-<h2>Mis productos</h2>
-<div id="list"><p class="notice">No hay productos registrados.</p></div>
+<h2>Nueva venta</h2>
+<div id="saleItems"></div>
+<hr>
+<div class="sale-total">Total venta: <span id="saleTotal">₡0</span></div>
+<div class="notice">Agrega varios productos a la misma venta. Al confirmar, se descuentan automáticamente del inventario.</div>
+<button id="addLine" class="secondary" style="width:100%;margin-top:12px">＋ Agregar producto a la venta</button>
+<button id="confirmSale" class="primary">Confirmar venta</button>
+</section>
+</section>
+
+<section id="historial" class="section">
+<section class="card"><h2>Historial de ventas</h2><div id="salesList"></div></section>
 </section>
 </main>
+
 <script>
-const KEY="cg_products_v1";
-let products=JSON.parse(localStorage.getItem(KEY)||"[]");
-let editing=null;
+const OLD_KEY="cg_products_v1", DATA_KEY="cg_data_v2";
+let data=loadData(), editing=null, saleLines=[];
+
+function loadData(){
+  const saved=JSON.parse(localStorage.getItem(DATA_KEY)||"null");
+  if(saved && Array.isArray(saved.products)) return saved;
+  const old=JSON.parse(localStorage.getItem(OLD_KEY)||"[]");
+  return {products:old.map(p=>({...p, sold:0})), sales:[]};
+}
+function persist(){localStorage.setItem(DATA_KEY,JSON.stringify(data));}
 const $=id=>document.getElementById(id);
-const money=n=>"₡"+Number(n).toLocaleString("es-CR",{minimumFractionDigits:0,maximumFractionDigits:2});
+const money=n=>"₡"+Number(n||0).toLocaleString("es-CR",{minimumFractionDigits:0,maximumFractionDigits:2});
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));}
+function costOf(p){return p.usd?p.buy*p.rate:p.buy}
+function available(p){return Math.max(0,Number(p.qty||0)-Number(p.sold||0))}
 function toggleCurrency(){
  const usd=$("currency").value==="USD";
  $("rateBox").classList.toggle("hidden",!usd);
- $("buyLabel").textContent=usd?"Precio de compra ($)":"Precio de compra (₡)";
+ $("buyLabel").textContent=usd?"Precio de compra por unidad ($)":"Precio de compra por unidad (₡)";
  updatePreview();
 }
 function updatePreview(){
- const usd=$("currency").value==="USD", buy=Number($("buy").value)||0, rate=Number($("rate").value)||0, sell=Number($("sell").value)||0;
- if(usd){
-   const cost=buy*rate, profit=sell-cost, margin=cost?(profit/cost*100):0;
-   $("preview").classList.remove("hidden");
-   $("preview").innerHTML=`Costo real por unidad: <b>${money(cost)}</b><br>Ganancia por unidad: <b>${money(profit)}</b> · Margen: <b>${margin.toFixed(1)}%</b>`;
- }else{
-   const profit=sell-buy, margin=buy?(profit/buy*100):0;
-   $("preview").classList.remove("hidden");
-   $("preview").innerHTML=`Ganancia por unidad: <b>${money(profit)}</b> · Margen: <b>${margin.toFixed(1)}%</b>`;
- }
+ const usd=$("currency").value==="USD",buy=Number($("buy").value)||0,rate=Number($("rate").value)||0,sell=Number($("sell").value)||0;
+ const cost=usd?buy*rate:buy,profit=sell-cost,margin=cost?profit/cost*100:0;
+ $("preview").classList.remove("hidden");
+ $("preview").innerHTML=`Costo real por unidad: <b>${money(cost)}</b><br>Ganancia por unidad: <b>${money(profit)}</b> · Margen: <b>${margin.toFixed(1)}%</b>`;
 }
 function clearForm(){
- ["name","buy","rate","sell"].forEach(id=>$(id).value="");
- $("qty").value=1;$("currency").value="CRC";editing=null;
- $("formTitle").textContent="Agregar producto";$("save").textContent="Agregar producto";$("cancel").classList.add("hidden");
- toggleCurrency();
+ ["name","buy","rate","sell"].forEach(id=>$(id).value="");$("qty").value=1;$("currency").value="CRC";
+ editing=null;$("formTitle").textContent="Agregar producto";$("save").textContent="Agregar producto";$("cancel").classList.add("hidden");toggleCurrency();
 }
 function save(){
- const name=$("name").value.trim(), qty=Number($("qty").value), buy=Number($("buy").value), sell=Number($("sell").value);
- const usd=$("currency").value==="USD", rate=Number($("rate").value);
+ const name=$("name").value.trim(),qty=Number($("qty").value),buy=Number($("buy").value),sell=Number($("sell").value),usd=$("currency").value==="USD",rate=Number($("rate").value);
  if(!name)return alert("Escribe el nombre del producto.");
  if(!Number.isFinite(qty)||qty<1)return alert("La cantidad debe ser al menos 1.");
  if(!Number.isFinite(buy)||buy<=0)return alert("Ingresa el precio de compra.");
  if(!Number.isFinite(sell)||sell<0)return alert("Ingresa el precio de venta.");
  if(usd&&(!Number.isFinite(rate)||rate<=0))return alert("Ingresa el tipo de cambio que pagaste.");
- const p={id:editing||Date.now(),name,qty,buy,sell,usd,rate:usd?rate:null};
- if(editing) products=products.map(x=>x.id===editing?p:x); else products.push(p);
- localStorage.setItem(KEY,JSON.stringify(products)); clearForm(); render();
+ const old=editing?data.products.find(x=>x.id===editing):null;
+ const p={id:editing||Date.now(),name,qty,buy,sell,usd,rate:usd?rate:null,sold:old?old.sold||0:0};
+ if(editing)data.products=data.products.map(x=>x.id===editing?p:x);else data.products.push(p);
+ persist();clearForm();renderAll();
 }
 function edit(id){
- const p=products.find(x=>x.id===id);if(!p)return;
+ const p=data.products.find(x=>x.id===id);if(!p)return;
  editing=id;$("name").value=p.name;$("qty").value=p.qty;$("buy").value=p.buy;$("sell").value=p.sell;
  $("currency").value=p.usd?"USD":"CRC";$("rate").value=p.rate||"";
  $("formTitle").textContent="Editar producto";$("save").textContent="Guardar cambios";$("cancel").classList.remove("hidden");
- toggleCurrency();window.scrollTo({top:0,behavior:"smooth"});
+ toggleCurrency();showTab("productos");window.scrollTo({top:0,behavior:"smooth"});
 }
-function del(id){if(confirm("¿Eliminar este producto?")){products=products.filter(p=>p.id!==id);localStorage.setItem(KEY,JSON.stringify(products));render();}}
-function render(){
- let inv=0,sales=0,profit=0;
- if(!products.length){$("list").innerHTML='<p class="notice">No hay productos registrados.</p>';}
- else $("list").innerHTML=products.map(p=>{
-   const cost=p.usd?p.buy*p.rate:p.buy, unit=p.sell-cost, total=unit*p.qty;
-   inv+=cost*p.qty;sales+=p.sell*p.qty;profit+=total;
-   const margin=cost?(unit/cost*100):0;
+function del(id){
+ const p=data.products.find(x=>x.id===id);if(!p)return;
+ if(available(p)>0 && (p.sold||0)>0)return alert("Este producto ya tiene ventas registradas. No se puede eliminar porque afectaría el historial.");
+ if(confirm("¿Eliminar este producto?")){data.products=data.products.filter(x=>x.id!==id);persist();renderAll();}
+}
+function renderProducts(){
+ let invValue=0,units=0,sales=0,soldCost=0,profit=0;
+ $("list").innerHTML=data.products.length?data.products.map(p=>{
+   const cost=costOf(p),avail=available(p),sold=p.sold||0;
+   invValue+=cost*avail;units+=avail;
+   const unitProfit=p.sell-cost;
    return `<div class="item"><h3>${esc(p.name)}</h3>
-   <p>📦 Cantidad: <b>${p.qty}</b></p>
-   <p>🛒 Compra: <b>${p.usd?"$"+p.buy.toLocaleString("en-US")+" × ₡"+p.rate.toLocaleString("es-CR")+" = "+money(cost):money(p.buy)}</b></p>
-   <p>🏷️ Venta: <b>${money(p.sell)}</b></p>
-   <p class="profit">💰 Ganancia por unidad: ${money(unit)}</p>
-   <p class="profit">📈 Ganancia total: ${money(total)} · Margen: ${margin.toFixed(1)}%</p>
+   <p>📦 Compradas: <b>${p.qty}</b> · Disponibles: <b>${avail}</b> · Vendidas: <b>${sold}</b></p>
+   <p>🛒 Costo: <b>${p.usd?"$"+Number(p.buy).toLocaleString("en-US")+" × ₡"+Number(p.rate).toLocaleString("es-CR")+" = "+money(cost):money(cost)}</b></p>
+   <p>🏷️ Venta: <b>${money(p.sell)}</b> por unidad</p>
+   <p class="profit">💰 Ganancia por unidad: ${money(unitProfit)}</p>
    <div class="actions"><button class="secondary" onclick="edit(${p.id})">Editar</button><button class="danger" onclick="del(${p.id})">Eliminar</button></div></div>`;
- }).join("");
- $("count").textContent=products.length;$("invested").textContent=money(inv);$("sales").textContent=money(sales);$("profit").textContent=money(profit);
+ }).join(""):'<p class="empty">No hay productos registrados.</p>';
+ data.sales.forEach(s=>{sales+=s.total;soldCost+=s.cost;profit+=s.profit});
+ $("count").textContent=data.products.length;$("units").textContent=units;$("inventoryValue").textContent=money(invValue);
+ $("sales").textContent=money(sales);$("soldCost").textContent=money(soldCost);$("profit").textContent=money(profit);
 }
+function addSaleLine(productId="",qty=1){
+ const lineId=Date.now()+Math.random();
+ saleLines.push({lineId,productId,qty});
+ renderSaleLines();
+}
+function renderSaleLines(){
+ const box=$("saleItems");
+ if(!saleLines.length){box.innerHTML='<p class="empty">Aún no has agregado productos a la venta.</p>';updateSaleTotal();return;}
+ box.innerHTML=saleLines.map(l=>{
+   const p=data.products.find(x=>String(x.id)===String(l.productId)),avail=p?available(p):0;
+   const options=data.products.map(x=>`<option value="${x.id}" ${String(x.id)===String(l.productId)?"selected":""}>${esc(x.name)} (disp. ${available(x)})</option>`).join("");
+   return `<div class="sale-line"><div class="sale-line-top"><b>Producto</b><button class="danger" onclick="removeSaleLine('${l.lineId}')">Quitar</button></div>
+   <select onchange="changeSaleProduct('${l.lineId}',this.value)"><option value="">Selecciona un producto</option>${options}</select>
+   <label>Cantidad</label><input type="number" min="1" max="${Math.max(1,avail)}" value="${l.qty}" onchange="changeSaleQty('${l.lineId}',this.value)">
+   <div style="margin-top:8px">Subtotal: <b>${money(p?(p.sell*l.qty):0)}</b></div></div>`;
+ }).join("");
+ updateSaleTotal();
+}
+function removeSaleLine(id){saleLines=saleLines.filter(x=>String(x.lineId)!==String(id));renderSaleLines();}
+function changeSaleProduct(id,val){const l=saleLines.find(x=>String(x.lineId)===String(id));if(l){l.productId=val;l.qty=1;renderSaleLines();}}
+function changeSaleQty(id,val){
+ const l=saleLines.find(x=>String(x.lineId)===String(id));if(!l)return;
+ const p=data.products.find(x=>String(x.id)===String(l.productId));const max=p?available(p):1;
+ l.qty=Math.max(1,Math.min(Number(val)||1,max));renderSaleLines();
+}
+function updateSaleTotal(){
+ const total=saleLines.reduce((sum,l)=>{const p=data.products.find(x=>String(x.id)===String(l.productId));return sum+(p?p.sell*l.qty:0)},0);
+ $("saleTotal").textContent=money(total);
+}
+function confirmSale(){
+ if(!saleLines.length)return alert("Agrega al menos un producto.");
+ for(const l of saleLines){
+   if(!l.productId)return alert("Selecciona un producto en todas las líneas.");
+   const p=data.products.find(x=>String(x.id)===String(l.productId));
+   if(!p)return alert("Uno de los productos ya no existe.");
+   if(l.qty<1||l.qty>available(p))return alert(`No hay suficiente inventario de ${p.name}.`);
+ }
+ const items=saleLines.map(l=>{
+   const p=data.products.find(x=>String(x.id)===String(l.productId)),cost=costOf(p);
+   return {productId:p.id,name:p.name,qty:l.qty,sell:p.sell,cost:cost*l.qty,subtotal:p.sell*l.qty,profit:(p.sell-cost)*l.qty};
+ });
+ items.forEach(i=>{const p=data.products.find(x=>x.id===i.productId);p.sold=(p.sold||0)+i.qty;});
+ const total=items.reduce((a,i)=>a+i.subtotal,0),cost=items.reduce((a,i)=>a+i.cost,0);
+ data.sales.unshift({id:Date.now(),number:data.sales.length+1,date:new Date().toISOString(),items,total,cost,profit:total-cost});
+ persist();saleLines=[];renderAll();showTab("historial");alert("Venta registrada correctamente.");
+}
+function renderSales(){
+ const box=$("salesList");
+ if(!data.sales.length){box.innerHTML='<p class="empty">Todavía no hay ventas registradas.</p>';return;}
+ box.innerHTML=data.sales.map(s=>{
+   const date=new Date(s.date).toLocaleString("es-CR");
+   return `<div class="item"><h3>Venta #${String(s.number).padStart(3,"0")}</h3><p>📅 ${date}</p>
+   ${s.items.map(i=>`<p>• ${esc(i.name)} × ${i.qty} = <b>${money(i.subtotal)}</b></p>`).join("")}
+   <hr><p>Venta: <b>${money(s.total)}</b> · Costo: <b>${money(s.cost)}</b></p>
+   <p class="profit">💰 Ganancia: ${money(s.profit)}</p></div>`;
+ }).join("");
+}
+function renderAll(){renderProducts();renderSaleLines();renderSales();}
+function showTab(id){
+ document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
+ document.querySelectorAll(".section").forEach(s=>s.classList.toggle("active",s.id===id));
+}
+document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
 $("currency").addEventListener("change",toggleCurrency);
 ["buy","rate","sell"].forEach(id=>$(id).addEventListener("input",updatePreview));
 $("save").addEventListener("click",save);$("cancel").addEventListener("click",clearForm);
-toggleCurrency();render();
+$("addLine").addEventListener("click",()=>addSaleLine());
+$("confirmSale").addEventListener("click",confirmSale);
+toggleCurrency();renderAll();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}
 </script>
 </body></html>
